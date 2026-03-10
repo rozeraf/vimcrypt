@@ -1,24 +1,54 @@
+import * as p from "@clack/prompts";
 import { encrypt, decrypt } from "./vimcrypt";
 
-const [, , command, input, password] = process.argv;
+p.intro("vimcrypt");
 
-if (!command || !input || !password) {
-  console.error("Usage:");
-  console.error("  vimcrypt encrypt <text> <password>");
-  console.error("  vimcrypt decrypt <cipher> <password>");
-  process.exit(1);
+const command = await p.select({
+  message: "Action",
+  options: [
+    { value: "encrypt", label: "Encrypt" },
+    { value: "decrypt", label: "Decrypt" },
+  ],
+});
+
+if (p.isCancel(command)) {
+  p.cancel("Cancelled");
+  process.exit(0);
 }
 
-if (command === "encrypt") {
-  console.log(await encrypt(input, password));
-} else if (command === "decrypt") {
-  try {
-    console.log(await decrypt(input, password));
-  } catch (e) {
-    console.error((e as Error).message);
-    process.exit(1);
-  }
-} else {
-  console.error(`Unknown command: ${command}`);
+const input = await p.text({
+  message: command === "encrypt" ? "Text to encrypt" : "Cipher to decrypt",
+  validate: (v) => (!v ? "Required" : undefined),
+});
+
+if (p.isCancel(input)) {
+  p.cancel("Cancelled");
+  process.exit(0);
+}
+
+const password = await p.password({
+  message: "Password",
+  validate: (v) => (!v ? "Required" : undefined),
+});
+
+if (p.isCancel(password)) {
+  p.cancel("Cancelled");
+  process.exit(0);
+}
+
+const spinner = p.spinner();
+spinner.start(command === "encrypt" ? "Encrypting" : "Decrypting");
+
+try {
+  const result =
+    command === "encrypt"
+      ? await encrypt(input as string, password as string)
+      : await decrypt(input as string, password as string);
+
+  spinner.stop("Done");
+  p.note(result, "Result");
+} catch (e) {
+  spinner.stop("Failed");
+  p.cancel((e as Error).message);
   process.exit(1);
 }
