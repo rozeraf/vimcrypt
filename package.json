@@ -1,12 +1,33 @@
 {
   "name": "vimcrypt",
-  "module": "index.ts",
+  "version": "0.1.0",
+  "description": "AES-256-GCM encryption with vim-command encoding",
   "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
+  "main": "./dist/vim-cipher.js",
+  "types": "./dist/vim-cipher.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/vim-cipher.js",
+      "types": "./dist/vim-cipher.d.ts"
+    }
   },
-  "peerDependencies": {
-    "typescript": "^5"
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test"
+  },
+  "keywords": [
+    "encryption",
+    "vim",
+    "aes",
+    "cipher",
+    "crypto"
+  ],
+  "author": "rozeraf",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
   }
 }
