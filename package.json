@@ -26,7 +26,7 @@
     "crypto"
   ],
   "author": "rozeraf",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "typescript": "^5.0.0"
   }
